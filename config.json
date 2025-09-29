@@ -1,0 +1,8 @@
+{
+  "proxyBase": "https://extto-proxy.davlav.workers.dev",
+  "proxyKey": "",
+  "torrentio": {
+    "enabled": true,
+    "base": "https://torrentio.strem.fun"
+  }
+}

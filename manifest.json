@@ -1,0 +1,25 @@
+{
+  "id": "com.david.extto.torrentstream",
+  "version": "0.2.0",
+  "name": "Ext.to Torrent Streams (Cloud)",
+  "description": "Stremio addon: searches ext.to via Cloudflare Worker, with Torrentio fallback.",
+  "logo": "https://stremio-logo.s3.eu-central-1.amazonaws.com/stremio-logo-small.png",
+  "background": "https://stremio-logo.s3.eu-central-1.amazonaws.com/stremio-background.jpg",
+  "catalogs": [],
+  "resources": [
+    {
+      "name": "stream",
+      "types": [
+        "movie",
+        "series"
+      ]
+    }
+  ],
+  "types": [
+    "movie",
+    "series"
+  ],
+  "idPrefixes": [
+    "tt"
+  ]
+}

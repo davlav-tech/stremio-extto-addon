@@ -1,0 +1,19 @@
+{
+  "name": "stremio-extto-addon",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Stremio addon that searches ext.to via Cloudflare Worker and falls back to Torrentio.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "stremio-addon-sdk": "^1.6.8",
+    "cheerio": "^1.0.0-rc.12"
+  }
+}
