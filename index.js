@@ -51,9 +51,17 @@ async function withRetries(fn, { retries = 2, delayMs = 500 } = {}) {
   throw lastErr
 }
 function pad2(n){ return String(n).padStart(2,'0') }
-function parseMetaId(id){
+function parseMetaId(id) {
+  if (!id || typeof id !== 'string') {
+    console.warn('[parseMetaId] invalid id:', id)
+    return { imdb: null, season: null, episode: null }
+  }
   const p = id.split(':')
-  return { imdb: p[0], season: p[1]?parseInt(p[1],10):null, episode: p[2]?parseInt(p[2],10):null }
+  return {
+    imdb: p[0] || null,
+    season: p[1] ? parseInt(p[1], 10) : null,
+    episode: p[2] ? parseInt(p[2], 10) : null
+  }
 }
 async function fetchCinemetaMeta(type, id){
   const url = `https://v3-cinemeta.strem.io/meta/${encodeURIComponent(type)}/${encodeURIComponent(id)}.json`
