@@ -202,7 +202,14 @@ async function fetchTorrentioFallback(type, imdb, base = 'https://torrentio.stre
 
 // -------------------- Addon --------------------
 const builder = new addonBuilder(manifest)
-
+builder.defineStreamHandler(async (args) => {
+  // --- normalize args shape (some transports wrap the payload under args.type) ---
+  if (args && typeof args.type === 'object' && args.type.type && !args.id) {
+    args = args.type;
+  }
+  const { type, id, extra } = args;
+  console.log('[stream] normalized req', { type, id, extra });
+  // ... ההמשך כפי שהיה ...
 builder.defineStreamHandler(async (args) => {
   const { type, id } = args
   const { imdb, season, episode } = parseMetaId(id)
