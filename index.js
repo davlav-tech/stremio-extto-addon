@@ -74,40 +74,46 @@ builder.defineStreamHandler(async (_args) => {
 
     // helpers shared with details scraping
     const extractMagnetsFromHtml = (html) => {
-      const $ = (await import('cheerio')).load(html)
-      const arr = []
-      $('a[href^="magnet:?xt="]').each((_, a) => {
-        const h = $(a).attr('href')
-        if (h && h.startsWith('magnet:?')) arr.push(h)
-      })
-      return Array.from(new Set(arr))
-    }
-    const enrichLabelsFromDom = (html, mags) => {
-      const $ = (await import('cheerio')).load(html)
-      const set = new Set(mags)
-      const res = []
-      $('a[href^="magnet:?xt="]').each((_, a) => {
-        const h = $(a).attr('href'); if (!h || !set.has(h)) return
-        const row = $(a).closest('tr, .search-result, .result, li, .row, .card, .table, .torrent')
-        const text = row.text().replace(/\s+/g, ' ').trim()
-        const mQual = text.match(/(2160p|4k|1080p|720p|480p)/i)
-        const mSize = text.match(/(\d+(?:\.\d+)?\s?(?:GB|MB))/i)
-        res.push({ magnet: h, quality: mQual?.[1]?.toUpperCase(), size: mSize?.[1]?.toUpperCase() })
-      })
-      const map = new Map(res.map(x => [x.magnet, x]))
-      return mags.map(m => map.get(m) || { magnet: m })
-    }
-    const extractDetailLinksFromList = (html, baseUrl) => {
-      const $ = (await import('cheerio')).load(html)
-      const out = []
-      $('a[href^="/torrent/"]').each((_, a) => {
-        const href = $(a).attr('href')
-        if (!href) return
-        const abs = href.startsWith('http') ? href : `${baseUrl}${href}`
-        out.push(abs)
-      })
-      return Array.from(new Set(out)).slice(0, 5)
-    }
+      // 1) במקום: const $ = (await import('cheerio')).load(html)
+function extractMagnetsFromHtml(html){
+  const $ = cheerio.load(html)
+  const arr = []
+  $('a[href^="magnet:?xt="]').each((_, a) => {
+    const h = $(a).attr('href')
+    if (h && h.startsWith('magnet:?')) arr.push(h)
+  })
+  return Array.from(new Set(arr))
+}
+
+// 2) במקום: const $ = (await import('cheerio')).load(html)
+function enrichLabelsFromDom(html, mags){
+  const $ = cheerio.load(html)
+  const set = new Set(mags)
+  const res = []
+  $('a[href^="magnet:?xt="]').each((_, a) => {
+    const h = $(a).attr('href'); if (!h || !set.has(h)) return
+    const row = $(a).closest('tr, .search-result, .result, li, .row, .card, .table, .torrent')
+    const text = row.text().replace(/\s+/g, ' ').trim()
+    const mQual = text.match(/(2160p|4k|1080p|720p|480p)/i)
+    const mSize = text.match(/(\d+(?:\.\d+)?\s?(?:GB|MB))/i)
+    res.push({ magnet: h, quality: mQual?.[1]?.toUpperCase(), size: mSize?.[1]?.toUpperCase() })
+  })
+  const map = new Map(res.map(x => [x.magnet, x]))
+  return mags.map(m => map.get(m) || { magnet: m })
+}
+
+// 3) במקום: const $ = (await import('cheerio')).load(html)
+function extractDetailLinksFromList(html, baseUrl){
+  const $ = cheerio.load(html)
+  const out = []
+  $('a[href^="/torrent/"]').each((_, a) => {
+    const href = $(a).attr('href')
+    if (!href) return
+    const abs = href.startsWith('http') ? href : `${baseUrl}${href}`
+    out.push(abs)
+  })
+  return Array.from(new Set(out)).slice(0, 5)
+}
     const scrapeMagnetsFromDetails = async (detailUrls) => {
       const results = []
       for (const url of detailUrls) {
